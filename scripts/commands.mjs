@@ -4,7 +4,7 @@ import { toString } from "uint8arrays/to-string";
 import { writeFile } from "fs";
 import { DID } from "dids";
 import { Ed25519Provider } from "key-did-provider-ed25519";
-import { homedir } from "os";
+
 export const RunCommands = async () => {
   const generateAdminKeyDid = async () => {
     const seed = new Uint8Array(randomBytes(32));
@@ -21,6 +21,7 @@ export const RunCommands = async () => {
       did,
     };
   };
+  
   const generateLocalConfig = async (adminSeed, adminDid) => {
     const configData = {
       anchor: {},
@@ -35,10 +36,6 @@ export const RunCommands = async () => {
         "log-level": 2,
         "log-to-files": false,
       },
-      metrics: {
-        "metrics-exporter-enabled": false,
-        "metrics-port": 9090,
-      },
       network: {
         name: "testnet-clay",
       },
@@ -48,11 +45,12 @@ export const RunCommands = async () => {
         "local-directory": `~/.ceramic/statestore/`,
       },
       indexing: {
-        db: `sqlite://${homedir()}/.ceramic/indexing.sqlite`,
+        db: `sqlite://~/.ceramic/indexing.sqlite`,
         "allow-queries-before-historical-sync": true,
         models: [],
       },
     };
+
     writeFile(
       `${process.cwd()}/composedb.config.json`,
       JSON.stringify(configData),
@@ -62,12 +60,14 @@ export const RunCommands = async () => {
         }
       }
     );
+
     writeFile(`${process.cwd()}/admin_seed.txt`, adminSeed, (err) => {
       if (err) {
         console.error(err);
       }
     });
   };
+  
   const { seed, did } = await generateAdminKeyDid();
   console.log(seed, did);
   await generateLocalConfig(seed, did);

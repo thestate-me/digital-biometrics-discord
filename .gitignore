@@ -2,4 +2,5 @@
 .env
 admin_seed.txt
 composedb.config.json
-node_modules/*
+node_modules
+data

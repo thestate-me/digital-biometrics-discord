@@ -1,0 +1,9 @@
+services:
+  ceramic:
+    container_name: ceramic
+    image: ceramicnetwork/js-ceramic
+    ports:
+      - 7007:7007
+    volumes:
+      - ./composedb.config.json:/root/.ceramic/daemon.config.json
+      - ./data:/root/.ceramic

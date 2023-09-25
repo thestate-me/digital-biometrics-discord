@@ -782,7 +782,7 @@
     tweetnacl "^1.0.3"
     uint8arrays "^4.0.3"
 
-"@ceramicnetwork/cli@2.40.0", "@ceramicnetwork/cli@^2.38.0":
+"@ceramicnetwork/cli@^2.38.0":
   version "2.40.0"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/cli/-/cli-2.40.0.tgz#222c7f2bc01836a610bf15dce7d9ce0fdc6c325b"
   integrity sha512-HuDJZcCU45TnxVqIYJFO6TWRt5MwkL2ZWXd6k3VetaK5nd6j8Nn6AT80o9exqtNmpcUz6ZtbV+MJuPYzizGsuQ==
