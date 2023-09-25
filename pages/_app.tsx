@@ -52,10 +52,13 @@ const config = createConfig({
   webSocketPublicClient,
 });
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+function MyApp({
+  Component,
+  pageProps,
+}: AppProps & { pageProps: { session: any } }) {
   return (
     <WagmiConfig config={config}>
-      <SessionProvider session={session}>
+      <SessionProvider session={pageProps.session}>
         <ChakraProvider>
           {/* <Profile /> */}
 
