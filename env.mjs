@@ -24,6 +24,7 @@ const client = z.object({
   NEXT_PUBLIC_INFURA_API_KEY: z.string().min(1).optional(),
   REACT_APP_ALCHEMY_API_KEY: z.string().optional(),
   REACT_APP_CHAIN_ID: z.string().min(1).optional(),
+  WALLETCONNECT_KEY: z.string().min(1).optional()
 });
 
 const processEnv = {
