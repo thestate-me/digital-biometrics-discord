@@ -1,5 +1,5 @@
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { Wallet, ethers } from "ethers";
+import { JsonRpcProvider, Wallet } from "ethers";
 import { NextApiRequest, NextApiResponse } from "next";
 import { EASContractAddress } from "../../utils/utils";
 import { ComposeClient } from "@composedb/client";
@@ -14,8 +14,11 @@ import KeyResolver from "key-did-resolver";
 const eas = new EAS(EASContractAddress)
 const schemaEncoder = new SchemaEncoder('string EmotionalIntelligence,string Creativity,string CommunicationInitiative,string LeadershipQualities')
 
-const signer = new Wallet(process.env.AUTHOR_KEY!, new ethers.providers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public'))
-eas.connect(signer)
+const provider =  new JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
+const signer = new Wallet(process.env.AUTHOR_KEY!)
+
+// @ts-expect-error: Ignore type error
+eas.connect(provider)
 
 export default async function createAttestation(req: NextApiRequest, res: NextApiResponse<any>) {
   const offchain = await eas.getOffchain()
@@ -32,12 +35,13 @@ export default async function createAttestation(req: NextApiRequest, res: NextAp
     recipient: address,
     expirationTime: 0,
     time: Math.floor(Date.now() / 1000),
-    revocable: false, // Be aware that if your schema is not revocable, this MUST be false
+    revocable: false,
     version: 1,
     nonce: 0,
     schema: "0xb494add8fe8ee3e1aa2dd8d6f71521dd0135208fcfc474eda72c8aa6aef5959d",
     refUID: '0x0000000000000000000000000000000000000000000000000000000000000000',
     data: encodedData,
+    // @ts-expect-error: Ignore type error
   }, signer);
 
   const ceramic = new CeramicClient('http://localhost:7007');

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import dayjs from "dayjs";
-import { ethers } from "ethers";
+import { BrowserProvider, ZeroAddress, ethers } from "ethers";
 import { MdOutlineVerified, MdVerified } from "react-icons/md";
 import { Identicon } from "./Identicon";
 import { theme } from "../utils/theme";
@@ -63,11 +63,11 @@ export function AttestationItem({ data }: Props) {
               e.stopPropagation();
               setConfirming(true);
               try {
-                const provider = new ethers.providers.Web3Provider(
-                  window.ethereum as unknown as ethers.providers.ExternalProvider
-                );
-                const signer = provider.getSigner();
+                const provider = new BrowserProvider(window.ethereum);
+                const signer = await provider.getSigner();
                 console.log(signer);
+
+                // @ts-expect-error
                 eas.connect(signer);
 
                 const schemaEncoder = new SchemaEncoder("bool confirm");
@@ -80,7 +80,7 @@ export function AttestationItem({ data }: Props) {
                 const offchainAttestation =
                   await offchain.signOffchainAttestation(
                     {
-                      recipient: ethers.constants.AddressZero,
+                      recipient: ZeroAddress,
                       // Unix timestamp of when attestation expires. (0 for no expiration)
                       expirationTime: 0,
                       // Unix timestamp of current time
@@ -92,6 +92,7 @@ export function AttestationItem({ data }: Props) {
                       refUID: data.uid,
                       data: encoded,
                     },
+                    // @ts-expect-error
                     signer
                   );
 

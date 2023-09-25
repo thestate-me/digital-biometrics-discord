@@ -3,9 +3,8 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { Alchemy, Network } from 'alchemy-sdk';
-import { ethers } from 'ethers'
+import { JsonRpcProvider } from 'ethers'
 import invariant from 'tiny-invariant'
-import { env } from '../env.mjs'
 
 import type { Attestation, AttestationResult, EASChainConfig, EnsNamesResult, MyAttestationResult } from './types'
 
@@ -69,7 +68,7 @@ export async function getAddressForENS(name: string) {
 }
 
 export async function getENSName(address: string) {
-  const provider = new ethers.providers.StaticJsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`, 'mainnet')
+  const provider = new JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`, 'mainnet')
   return await provider.lookupAddress(address)
 }
 export async function getAttestation(uid: string): Promise<Attestation | null> {

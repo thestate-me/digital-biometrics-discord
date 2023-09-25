@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { networks } from "../utils/networks";
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { ethers } from "ethers";
+import { BrowserProvider, ethers } from "ethers";
 import Link from "next/link";
 import { EASContractAddress, getAddressForENS } from "../utils/utils";
 
@@ -166,11 +166,10 @@ export default function Home() {
               } else {
                 setAttesting(true);
                 try {
-                  const provider = new ethers.providers.Web3Provider(
-                    window.ethereum as unknown as ethers.providers.ExternalProvider
-                  );
-                  const signer = provider.getSigner();
+                  const provider = new BrowserProvider(window.ethereum);
+                  const signer = await provider.getSigner();
 
+                  // @ts-expect-error
                   eas.connect(signer);
 
                   const schemaEncoder = new SchemaEncoder("bool metIRL");
@@ -203,6 +202,7 @@ export default function Home() {
                           "0x0000000000000000000000000000000000000000000000000000000000000000",
                         data: encoded,
                       },
+                      // @ts-expect-error
                       signer
                     );
                   // un-comment the below to process an on-chain timestamp
