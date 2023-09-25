@@ -1,13 +1,16 @@
 import { ComposeClient } from "@composedb/client";
 import { RuntimeCompositeDefinition } from "@composedb/types";
-import { NextApiRequest, NextApiResponse } from "next";
 import { Wallet } from "ethers";
+import { NextApiRequest, NextApiResponse } from "next";
 
 import { definition } from "../../src/__generated__/definition.js";
 
-const signer = new Wallet(process.env.AUTHOR_KEY!)
+const signer = new Wallet(process.env.AUTHOR_KEY!);
 
-export default async function createAttestation(req: NextApiRequest, res: NextApiResponse<any>) {
+export default async function createAttestation(
+  req: NextApiRequest,
+  res: NextApiResponse<any>,
+) {
   const composeClient = new ComposeClient({
     ceramic: "http://localhost:7007",
     definition: definition as RuntimeCompositeDefinition,
@@ -20,9 +23,9 @@ export default async function createAttestation(req: NextApiRequest, res: NextAp
                 or: [
           {
             where: {
-              attester: { 
+              attester: {
                     equalTo: "${signer.address}"
-                  } 
+                  }
             }
           },
           {
@@ -30,12 +33,12 @@ export default async function createAttestation(req: NextApiRequest, res: NextAp
               where: {
             recipient : {
                     equalTo: "${req.body.account}"
-                  } 
+                  }
               }
             }
           }
             ],
-            } 
+            }
           first: 100) {
             edges {
               node {
@@ -43,10 +46,10 @@ export default async function createAttestation(req: NextApiRequest, res: NextAp
                     uid
                     schema
                     attester
-                    verifyingContract 
+                    verifyingContract
                     easVersion
-                    version 
-                    chainId 
+                    version
+                    chainId
                     types{
                       name
                       type
@@ -65,10 +68,10 @@ export default async function createAttestation(req: NextApiRequest, res: NextAp
                           uid
                           schema
                           attester
-                          verifyingContract 
+                          verifyingContract
                           easVersion
-                          version 
-                          chainId 
+                          version
+                          chainId
                           types{
                             name
                             type

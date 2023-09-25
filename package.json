@@ -1,5 +1,5 @@
 {
-  "name": "demo",
+  "name": "thestate-reputation",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -33,6 +33,7 @@
     "dayjs": "^1.11.9",
     "did-session": "^1.0.0",
     "dids": "^3.2.0",
+    "discord.js": "^14.13.0",
     "ethers": "^6.7.1",
     "framer-motion": "^8.4.3",
     "graphql": "^16.6.0",

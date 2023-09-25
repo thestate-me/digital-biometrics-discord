@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 const NavLink = ({ children }: { children: ReactNode }) => {
   const linkBg = useColorModeValue("gray.200", "gray.700");
@@ -58,8 +58,24 @@ const Home: NextPage = () => {
   const minimizeEtherWallet = (wallet: string) => {
     return wallet.slice(0, 6) + "..." + wallet.slice(-4);
   };
+  useEffect(() => {
+    if (session && session.user) {
+      fetch("/api/check-is-in-server", {
+        method: "POST",
+        body: JSON.stringify({
+          session,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((json) => console.log(json));
+    }
+  }, [session]);
   if (session) {
     const { user } = session;
+    console.log(session);
     return (
       <>
         <Box bg={boxBgColor} px={4}>
@@ -116,7 +132,7 @@ const Home: NextPage = () => {
                     <MenuDivider />
                     {/* <MenuItem>Your Account</MenuItem> */}
                     {isConnected && (
-                      <MenuItem onClick={() => signOut()}>
+                      <MenuItem onClick={() => disconnect()}>
                         <Text color={"tomato"}>Disconnect Wallet</Text>
                       </MenuItem>
                     )}
@@ -137,7 +153,9 @@ const Home: NextPage = () => {
                   Now, connect your wallet to Discord.
                 </Flex>
 
-                <Button onClick={() => connect()}>Connect Wallet</Button>
+                <Button bg="purple.500" color="white" onClick={() => connect()}>
+                  Connect Wallet
+                </Button>
               </Flex>
             )}
           </Flex>
@@ -172,7 +190,7 @@ const Home: NextPage = () => {
                   bg: "purple.300",
                 }}
               >
-                Sign In
+                Sign in with Discord
               </Button>
             </Stack>
           </Flex>
