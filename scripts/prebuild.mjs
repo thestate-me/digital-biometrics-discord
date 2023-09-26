@@ -1,5 +1,6 @@
 import ora from 'ora'
 import { writeComposite } from './composites.mjs'
+import './commands.mjs'
 
 const spinner = ora()
 
