@@ -4,28 +4,28 @@ import './env.mjs'
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['avatars.githubusercontent.com', 'images.unsplash.com'],
+    domains: ['avatars.githubusercontent.com', 'images.unsplash.com']
   },
   swcMinify: true,
   env: {
-    mode: process.env.NODE_ENV,
+    mode: process.env.NODE_ENV
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
       resourceQuery: /icon/,
-      use: ['@svgr/webpack'],
+      use: ['@svgr/webpack']
     })
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
       resourceQuery: { not: [/icon/] },
       loader: 'next-image-loader',
-      options: { assetPrefix: '' },
+      options: { assetPrefix: '' }
     })
     return config
-  },
+  }
 }
 
 export default nextConfig

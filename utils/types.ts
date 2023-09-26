@@ -1,4 +1,4 @@
-import { TypedData } from "@ethereum-attestation-service/eas-sdk/dist/offchain/typed-data-handler";
+import { TypedData } from '@ethereum-attestation-service/eas-sdk/dist/offchain/typed-data-handler'
 
 export type EASChainConfig = {
   chainId: number;

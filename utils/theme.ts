@@ -24,7 +24,7 @@ export const theme = {
     'orange-vivid-600': '#DE3A11',
     'orange-vivid-700': '#C52707',
     'orange-vivid-800': '#AD1D07',
-    'orange-vivid-900': '#841003',
+    'orange-vivid-900': '#841003'
   },
   neutrals: {
     'cool-grey-050': '#F5F7FA',
@@ -37,7 +37,7 @@ export const theme = {
     'cool-grey-700': '#3E4C59',
     'cool-grey-800': '#323F4B',
     'cool-grey-800-20': '#323F4B14',
-    'cool-grey-900': '#1F2933',
+    'cool-grey-900': '#1F2933'
   },
   supporting: {
     'magenta-vivid-050': '#FDEBFF',
@@ -82,6 +82,6 @@ export const theme = {
     'green-vivid-600': '#0F8613',
     'green-vivid-700': '#0E7817',
     'green-vivid-800': '#07600E',
-    'green-vivid-900': '#014807',
-  },
+    'green-vivid-900': '#014807'
+  }
 }

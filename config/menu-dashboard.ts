@@ -4,10 +4,10 @@
 export const menuDashboard = [
   {
     label: 'Dashboard',
-    href: '/dashboard',
+    href: '/dashboard'
   },
   {
     label: 'Account',
-    href: '/dashboard/account',
-  },
+    href: '/dashboard/account'
+  }
 ]

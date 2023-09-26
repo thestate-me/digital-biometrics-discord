@@ -1,20 +1,20 @@
-import { ComposeClient } from "@composedb/client";
-import { RuntimeCompositeDefinition } from "@composedb/types";
-import { Wallet } from "ethers";
-import { NextApiRequest, NextApiResponse } from "next";
+import { ComposeClient } from '@composedb/client'
+import { RuntimeCompositeDefinition } from '@composedb/types'
+import { Wallet } from 'ethers'
+import { NextApiRequest, NextApiResponse } from 'next'
 
-import { definition } from "../../src/__generated__/definition.js";
+import { definition } from '../../src/__generated__/definition.js'
 
-const signer = new Wallet(process.env.AUTHOR_KEY!);
+const signer = new Wallet(process.env.AUTHOR_KEY!)
 
-export default async function createAttestation(
+export default async function createAttestation (
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   const composeClient = new ComposeClient({
-    ceramic: "http://localhost:7007",
-    definition: definition as RuntimeCompositeDefinition,
-  });
+    ceramic: 'http://localhost:7007',
+    definition: definition as RuntimeCompositeDefinition
+  })
 
   try {
     const data: any = await composeClient.executeQuery(`
@@ -90,11 +90,11 @@ export default async function createAttestation(
               }
             }
           }
-      `);
-    return res.json(data);
+      `)
+    return res.json(data)
   } catch (err) {
     res.json({
-      err,
-    });
+      err
+    })
   }
 }

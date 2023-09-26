@@ -29,6 +29,6 @@ export const siteConfig: SiteConfig = {
     docs: '',
     discord: '',
     github: '',
-    twitter: '',
-  },
+    twitter: ''
+  }
 }

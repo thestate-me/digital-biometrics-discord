@@ -18,7 +18,7 @@ type Props = {
   onClick?: () => void
 }
 
-export function Identicon({ address, size, className, onClick }: Props) {
+export function Identicon ({ address, size, className, onClick }: Props) {
   const icon = jdenticon.toSvg(address, size, { padding: 0 })
 
   if (!address || !icon) return null

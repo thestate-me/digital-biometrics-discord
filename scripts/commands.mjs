@@ -1,75 +1,75 @@
-import KeyDIDResolver from "key-did-resolver";
-import { randomBytes } from "crypto";
-import { toString } from "uint8arrays/to-string";
-import { writeFile } from "fs";
-import { DID } from "dids";
-import { Ed25519Provider } from "key-did-provider-ed25519";
+import KeyDIDResolver from 'key-did-resolver'
+import { randomBytes } from 'crypto'
+import { toString } from 'uint8arrays/to-string'
+import { writeFile } from 'fs'
+import { DID } from 'dids'
+import { Ed25519Provider } from 'key-did-provider-ed25519'
 
 export const RunCommands = async () => {
   const generateAdminKeyDid = async () => {
-    const seed = new Uint8Array(randomBytes(32));
-    const keyResolver = KeyDIDResolver.getResolver();
+    const seed = new Uint8Array(randomBytes(32))
+    const keyResolver = KeyDIDResolver.getResolver()
     const did = new DID({
       provider: new Ed25519Provider(seed),
       resolver: {
-        ...keyResolver,
-      },
-    });
-    await did.authenticate();
+        ...keyResolver
+      }
+    })
+    await did.authenticate()
     return {
-      seed: toString(seed, "base16"),
-      did,
-    };
-  };
-  
+      seed: toString(seed, 'base16'),
+      did
+    }
+  }
+
   const generateLocalConfig = async (adminSeed, adminDid) => {
     const configData = {
       anchor: {},
-      "http-api": {
-        "cors-allowed-origins": [".*"],
-        "admin-dids": [adminDid.id],
+      'http-api': {
+        'cors-allowed-origins': ['.*'],
+        'admin-dids': [adminDid.id]
       },
       ipfs: {
-        mode: "bundled",
+        mode: 'bundled'
       },
       logger: {
-        "log-level": 2,
-        "log-to-files": false,
+        'log-level': 2,
+        'log-to-files': false
       },
       network: {
-        name: "testnet-clay",
+        name: 'testnet-clay'
       },
       node: {},
-      "state-store": {
-        mode: "fs",
-        "local-directory": `~/.ceramic/statestore/`,
+      'state-store': {
+        mode: 'fs',
+        'local-directory': '~/.ceramic/statestore/'
       },
       indexing: {
-        db: `sqlite://~/.ceramic/indexing.sqlite`,
-        "allow-queries-before-historical-sync": true,
-        models: [],
-      },
-    };
+        db: 'sqlite://~/.ceramic/indexing.sqlite',
+        'allow-queries-before-historical-sync': true,
+        models: []
+      }
+    }
 
     writeFile(
       `${process.cwd()}/composedb.config.json`,
       JSON.stringify(configData),
       (err) => {
         if (err) {
-          console.error(err);
+          console.error(err)
         }
       }
-    );
+    )
 
     writeFile(`${process.cwd()}/admin_seed.txt`, adminSeed, (err) => {
       if (err) {
-        console.error(err);
+        console.error(err)
       }
-    });
-  };
-  
-  const { seed, did } = await generateAdminKeyDid();
-  console.log(seed, did);
-  await generateLocalConfig(seed, did);
-};
-RunCommands();
+    })
+  }
+
+  const { seed, did } = await generateAdminKeyDid()
+  console.log(seed, did)
+  await generateLocalConfig(seed, did)
+}
+RunCommands()

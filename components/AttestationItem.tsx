@@ -1,46 +1,46 @@
-import { useState } from "react";
-import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import dayjs from "dayjs";
-import { BrowserProvider, ZeroAddress, ethers } from "ethers";
-import { MdOutlineVerified, MdVerified } from "react-icons/md";
-import { Identicon } from "./Identicon";
-import { theme } from "../utils/theme";
-import { ResolvedAttestation } from "../utils/types";
+import { useState } from 'react'
+import { EAS, SchemaEncoder } from '@ethereum-attestation-service/eas-sdk'
+import dayjs from 'dayjs'
+import { BrowserProvider, ZeroAddress } from 'ethers'
+import { MdOutlineVerified, MdVerified } from 'react-icons/md'
+import { Identicon } from './Identicon'
+import { theme } from '../utils/theme'
+import { ResolvedAttestation } from '../utils/types'
 import {
   CUSTOM_SCHEMAS,
   EASContractAddress,
   baseURL,
-  timeFormatString,
-} from "../utils/utils";
+  timeFormatString
+} from '../utils/utils'
 
 type Props = {
   data: ResolvedAttestation;
 };
 
-const eas = new EAS(EASContractAddress);
+const eas = new EAS(EASContractAddress)
 
-export function AttestationItem({ data }: Props) {
-  const address = data.recipient;
-  const [confirming, setConfirming] = useState(false);
+export function AttestationItem ({ data }: Props) {
+  const address = data.recipient
+  const [confirming, setConfirming] = useState(false)
 
-  if (!address) return null;
+  if (!address) return null
 
-  const isAttester = data.attester.toLowerCase() === data.currAccount;
-  console.log(data.currAccount);
-  let isConfirmed = !!data.confirmation;
-  const isConfirmable = !isAttester && !isConfirmed;
+  const isAttester = data.attester.toLowerCase() === data.currAccount
+  console.log(data.currAccount)
+  const isConfirmed = !!data.confirmation
+  const isConfirmable = !isAttester && !isConfirmed
 
-  let Icon = MdVerified;
+  let Icon = MdVerified
 
   if (!isConfirmed) {
-    Icon = MdOutlineVerified;
+    Icon = MdOutlineVerified
   }
 
   return (
     <div
       className="AttestContainer"
       onClick={() => {
-        window.open(`${baseURL}/attestation/view/${data.id}`);
+        window.open(`${baseURL}/attestation/view/${data.id}`)
       }}
     >
       <div className="IconHolder">
@@ -56,27 +56,28 @@ export function AttestationItem({ data }: Props) {
         {dayjs.unix(data.time).format(timeFormatString)}
       </div>
       <div className="Check">
-        {isConfirmable ? (
+        {isConfirmable
+          ? (
           <button
             className="ConfirmButton"
             onClick={async (e) => {
-              e.stopPropagation();
-              setConfirming(true);
+              e.stopPropagation()
+              setConfirming(true)
               try {
-                const provider = new BrowserProvider(window.ethereum);
-                const signer = await provider.getSigner();
-                console.log(signer);
+                const provider = new BrowserProvider(window.ethereum)
+                const signer = await provider.getSigner()
+                console.log(signer)
 
                 // @ts-expect-error
-                eas.connect(signer);
+                eas.connect(signer)
 
-                const schemaEncoder = new SchemaEncoder("bool confirm");
+                const schemaEncoder = new SchemaEncoder('bool confirm')
                 const encoded = schemaEncoder.encodeData([
-                  { name: "confirm", type: "bool", value: true },
-                ]);
+                  { name: 'confirm', type: 'bool', value: true }
+                ])
 
-                const offchain = await eas.getOffchain();
-                const time = Math.floor(Date.now() / 1000);
+                const offchain = await eas.getOffchain()
+                const time = Math.floor(Date.now() / 1000)
                 const offchainAttestation =
                   await offchain.signOffchainAttestation(
                     {
@@ -90,52 +91,53 @@ export function AttestationItem({ data }: Props) {
                       nonce: 0,
                       schema: CUSTOM_SCHEMAS.CONFIRM_SCHEMA,
                       refUID: data.uid,
-                      data: encoded,
+                      data: encoded
                     },
                     // @ts-expect-error
                     signer
-                  );
+                  )
 
                 // un-comment the below to process an on-chain timestamp
                 // const transaction = await eas.timestamp(offchainAttestation.uid);
                 // Optional: Wait for the transaction to be validated
                 // await transaction.wait();
-                const userAddress = await signer.getAddress();
-                console.log(offchainAttestation);
+                const userAddress = await signer.getAddress()
+                console.log(offchainAttestation)
                 const requestBody = {
                   ...offchainAttestation,
                   account: userAddress,
-                  stream: data.id,
-                };
+                  stream: data.id
+                }
                 const requestOptions = {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(requestBody),
-                };
-                //call confirmAttest endpoint to create a corresponding confirmation
-                await fetch("/api/confirmAttest", requestOptions)
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(requestBody)
+                }
+                // call confirmAttest endpoint to create a corresponding confirmation
+                await fetch('/api/confirmAttest', requestOptions)
                   .then((response) => response.json())
-                  .then((data) => console.log(data));
-                setConfirming(false);
-                window.location.reload();
+                  .then((data) => console.log(data))
+                setConfirming(false)
+                window.location.reload()
               } catch (e) {}
             }}
           >
-            {confirming ? "Confirming..." : "Confirm we met"}
+            {confirming ? 'Confirming...' : 'Confirm we met'}
           </button>
-        ) : (
+            )
+          : (
           <div className="VerifyIconContainer">
             <Icon
               color={
                 data.confirmation
-                  ? theme.supporting["green-vivid-400"]
-                  : theme.neutrals["cool-grey-100"]
+                  ? theme.supporting['green-vivid-400']
+                  : theme.neutrals['cool-grey-100']
               }
               size={22}
             />
           </div>
-        )}
+            )}
       </div>
     </div>
-  );
+  )
 }

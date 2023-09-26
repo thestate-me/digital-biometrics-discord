@@ -2,24 +2,23 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { Alchemy, Network } from 'alchemy-sdk';
+import { Alchemy, Network } from 'alchemy-sdk'
 import { JsonRpcProvider } from 'ethers'
 import invariant from 'tiny-invariant'
 
 import type { Attestation, AttestationResult, EASChainConfig, EnsNamesResult, MyAttestationResult } from './types'
 
-
 export const alchemyApiKey = process.env.REACT_APP_ALCHEMY_API_KEY
 
 export const CUSTOM_SCHEMAS = {
   MET_IRL_SCHEMA: '0xc59265615401143689cbfe73046a922c975c99d97e4c248070435b1104b2dea7',
-  CONFIRM_SCHEMA: '0xb96446c85ce538c1641a967f23ea11bbb4a390ef745fc5a9905689dbd48bac86',
+  CONFIRM_SCHEMA: '0xb96446c85ce538c1641a967f23ea11bbb4a390ef745fc5a9905689dbd48bac86'
 }
 
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
 
-function getChainId() {
+function getChainId () {
   return Number('11155111')
 }
 
@@ -36,8 +35,8 @@ export const EAS_CHAIN_CONFIGS: EASChainConfig[] = [
     schemaRegistryAddress: '0x0a7E2Ff54e76B8E6659aedc9103FB21c038050D0',
     etherscanURL: 'https://sepolia.etherscan.io',
     contractStartBlock: 2958570,
-    rpcProvider: `https://sepolia.infura.io/v3/`,
-  },
+    rpcProvider: 'https://sepolia.infura.io/v3/'
+  }
 ]
 
 export const activeChainConfig = EAS_CHAIN_CONFIGS.find((config) => config.chainId === CHAINID)
@@ -52,26 +51,26 @@ export const EASVersion = activeChainConfig.version
 export const EAS_CONFIG = {
   address: EASContractAddress,
   version: EASVersion,
-  chainId: CHAINID,
+  chainId: CHAINID
 }
 
 export const timeFormatString = 'MM/DD/YYYY h:mm:ss a'
 
-export async function getAddressForENS(name: string) {
+export async function getAddressForENS (name: string) {
   const config = {
     apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
-    network: Network.ETH_GOERLI,
-  };
-  const alchemy = new Alchemy(config);
+    network: Network.ETH_GOERLI
+  }
+  const alchemy = new Alchemy(config)
   const address = await alchemy.core.resolveName(name)
   return address
 }
 
-export async function getENSName(address: string) {
+export async function getENSName (address: string) {
   const provider = new JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`, 'mainnet')
   return await provider.lookupAddress(address)
 }
-export async function getAttestation(uid: string): Promise<Attestation | null> {
+export async function getAttestation (uid: string): Promise<Attestation | null> {
   const response = await axios.post<AttestationResult>(
     `${baseURL}/graphql`,
     {
@@ -79,19 +78,19 @@ export async function getAttestation(uid: string): Promise<Attestation | null> {
         'query Query($where: AttestationWhereUniqueInput!) {\n  attestation(where: $where) {\n    id\n    attester\n    recipient\n    revocationTime\n    expirationTime\n    time\n    txid\n    data\n  }\n}',
       variables: {
         where: {
-          id: uid,
-        },
-      },
+          id: uid
+        }
+      }
     },
     {
       headers: {
-        'content-type': 'application/json',
-      },
+        'content-type': 'application/json'
+      }
     }
   )
   return response.data.data.attestation
 }
-export async function getAttestationsForAddress(address: string) {
+export async function getAttestationsForAddress (address: string) {
   const response = await axios.post<MyAttestationResult>(
     `${baseURL}/graphql`,
     {
@@ -101,37 +100,37 @@ export async function getAttestationsForAddress(address: string) {
       variables: {
         where: {
           schemaId: {
-            equals: CUSTOM_SCHEMAS.MET_IRL_SCHEMA,
+            equals: CUSTOM_SCHEMAS.MET_IRL_SCHEMA
           },
           OR: [
             {
               attester: {
-                equals: address,
-              },
+                equals: address
+              }
             },
             {
               recipient: {
-                equals: address,
-              },
-            },
-          ],
+                equals: address
+              }
+            }
+          ]
         },
         orderBy: [
           {
-            time: 'desc',
-          },
-        ],
-      },
+            time: 'desc'
+          }
+        ]
+      }
     },
     {
       headers: {
-        'content-type': 'application/json',
-      },
+        'content-type': 'application/json'
+      }
     }
   )
   return response.data.data.attestations
 }
-export async function getConfirmationAttestationsForUIDs(refUids: string[]) {
+export async function getConfirmationAttestationsForUIDs (refUids: string[]) {
   const response = await axios.post<MyAttestationResult>(
     `${baseURL}/graphql`,
     {
@@ -141,28 +140,28 @@ export async function getConfirmationAttestationsForUIDs(refUids: string[]) {
       variables: {
         where: {
           schemaId: {
-            equals: CUSTOM_SCHEMAS.CONFIRM_SCHEMA,
+            equals: CUSTOM_SCHEMAS.CONFIRM_SCHEMA
           },
           refUID: {
-            in: refUids,
-          },
+            in: refUids
+          }
         },
         orderBy: [
           {
-            time: 'desc',
-          },
-        ],
-      },
+            time: 'desc'
+          }
+        ]
+      }
     },
     {
       headers: {
-        'content-type': 'application/json',
-      },
+        'content-type': 'application/json'
+      }
     }
   )
   return response.data.data.attestations
 }
-export async function getENSNames(addresses: string[]) {
+export async function getENSNames (addresses: string[]) {
   const response = await axios.post<EnsNamesResult>(
     `${baseURL}/graphql`,
     {
@@ -171,15 +170,15 @@ export async function getENSNames(addresses: string[]) {
         where: {
           id: {
             in: addresses,
-            mode: 'insensitive',
-          },
-        },
-      },
+            mode: 'insensitive'
+          }
+        }
+      }
     },
     {
       headers: {
-        'content-type': 'application/json',
-      },
+        'content-type': 'application/json'
+      }
     }
   )
   return response.data.data.ensNames
