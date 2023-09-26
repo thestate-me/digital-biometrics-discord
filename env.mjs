@@ -24,7 +24,10 @@ const client = z.object({
   NEXT_PUBLIC_INFURA_API_KEY: z.string().min(1).optional(),
   REACT_APP_ALCHEMY_API_KEY: z.string().optional(),
   REACT_APP_CHAIN_ID: z.string().min(1).optional(),
-  WALLETCONNECT_KEY: z.string().min(1).optional()
+  WALLETCONNECT_KEY: z.string().min(1).optional(),
+  DISCORD_CLIENT_ID: z.string().min(1).optional(),
+  DISCORD_CLIENT_SECRET: z.string().min(1).optional(),
+  DISCORD_BOT_SECRET: z.string().min(1).optional()
 });
 
 const processEnv = {
@@ -34,13 +37,16 @@ const processEnv = {
   APP_ADMINS: process.env.APP_ADMINS,
   SITE_URL: process.env.SITE_URL,
   NEXT_PUBLIC_USE_PUBLIC_PROVIDER: process.env.NEXT_PUBLIC_USE_PUBLIC_PROVIDER,
-  NEXT_PUBLIC_USE_HARDHAT_PROVIDER:
-    process.env.NEXT_PUBLIC_USE_HARDHAT_PROVIDER,
+  NEXT_PUBLIC_USE_HARDHAT_PROVIDER: process.env.NEXT_PUBLIC_USE_HARDHAT_PROVIDER,
   NEXT_PUBLIC_ALCHEMY_API_KEY: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
   NEXT_PUBLIC_INFURA_API_KEY: process.env.NEXT_PUBLIC_INFURA_API_KEY,
   REACT_APP_ALCHEMY_API_KEY: process.env.REACT_APP_ALCHEMY_API_KEY,
   REACT_APP_CHAIN_ID: process.env.REACT_APP_CHAIN_ID,
   AUTHOR_KEY: process.env.AUTHOR_KEY,
+  WALLETCONNECT_KEY: process.env.WALLETCONNECT_KEY,
+  DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
+  DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+  DISCORD_BOT_SECRET: process.env.DISCORD_BOT_SECRET
 };
 
 const merged = server.merge(client);
