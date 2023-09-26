@@ -20,50 +20,27 @@ const ceramic = new CeramicClient('http://localhost:7007')
  */
 export const writeComposite = async (spinner) => {
   await authenticate()
-  spinner.info('writing composite to Ceramic')
 
+  spinner.info('writing composite to Ceramic...')
   const attestationComposite = await createComposite(
     ceramic,
     './composites/00-attestation.graphql'
   )
 
-  const confirmSchema = readFileSync('./composites/01-confirm.graphql', {
-    encoding: 'utf-8'
-  }).replace('$ATTESTATION_ID', attestationComposite.modelIDs[0])
-
-  const confirmComposite = await Composite.create({
-    ceramic,
-    schema: confirmSchema
-  })
-
-  const confirmConnectSchema = readFileSync(
-    './composites/02-confirmConnect.graphql',
-    {
-      encoding: 'utf-8'
-    }
-  )
-    .replace('$CONFIRM_ID', confirmComposite.modelIDs[1])
-    .replace('$ATTESTATION_ID', attestationComposite.modelIDs[0])
-
-  const confirmConnectComposite = await Composite.create({
-    ceramic,
-    schema: confirmConnectSchema
-  })
-
   const composite = Composite.from([
-    attestationComposite,
-    confirmComposite,
-    confirmConnectComposite
+    attestationComposite
   ])
 
   await writeEncodedComposite(composite, './src/__generated__/definition.json')
-  spinner.info('creating composite for runtime usage')
+
+  spinner.info('creating composite for runtime usage...')
   await writeEncodedCompositeRuntime(
     ceramic,
     './src/__generated__/definition.json',
     './src/__generated__/definition.js'
   )
-  spinner.info('deploying composite')
+
+  spinner.info('deploying composite...')
   const deployComposite = await readEncodedComposite(
     ceramic,
     './src/__generated__/definition.json'

@@ -10,7 +10,7 @@ const server = await serveEncodedDefinition({
   port: 5001
 })
 
-console.log(`Server started on ${server.url}`)
+console.log(`Server started on ${server.port} port`)
 
 process.on('SIGTERM', () => {
   server.close(() => {
