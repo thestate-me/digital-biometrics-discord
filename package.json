@@ -7,6 +7,7 @@
     "ceramic": "docker compose up",
     "dev": "node scripts/run.mjs",
     "nextDev": "next dev",
+    "prebuild": "node scripts/prebuild.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
