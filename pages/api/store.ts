@@ -3,7 +3,7 @@ import { JsonRpcProvider, Wallet } from 'ethers'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { EASContractAddress } from '../../utils/utils'
 import { ComposeClient } from '@composedb/client'
-import { definition } from '../../src/__generated__/definition'
+import { definition } from '../../composites/generated/definition'
 import { RuntimeCompositeDefinition } from '@composedb/types'
 import { Ed25519Provider } from 'key-did-provider-ed25519'
 import { DID } from 'dids'
@@ -44,9 +44,9 @@ export default async function createAttestation (req: NextApiRequest, res: NextA
     // @ts-expect-error: Ignore type error
   }, signer)
 
-  const ceramic = new CeramicClient('http://localhost:7007')
+  const ceramic = new CeramicClient(process.env.CERAMIC_NODE_URL)
   const composeClient = new ComposeClient({
-    ceramic: 'http://localhost:7007',
+    ceramic: process.env.CERAMIC_NODE_URL!,
     definition: definition as RuntimeCompositeDefinition
   })
 

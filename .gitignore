@@ -5,4 +5,3 @@ composedb.config.json
 node_modules
 data
 yarn-error.log
-src/__generated__

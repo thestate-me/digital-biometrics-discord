@@ -3,7 +3,7 @@ import { RuntimeCompositeDefinition } from '@composedb/types'
 import { Wallet } from 'ethers'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { definition } from '../../src/__generated__/definition.js'
+import { definition } from '../../composites/generated/definition.js'
 
 const signer = new Wallet(process.env.AUTHOR_KEY!)
 
@@ -12,7 +12,7 @@ export default async function createAttestation (
   res: NextApiResponse<any>
 ) {
   const composeClient = new ComposeClient({
-    ceramic: 'http://localhost:7007',
+    ceramic: process.env.CERAMIC_NODE_URL!,
     definition: definition as RuntimeCompositeDefinition
   })
 

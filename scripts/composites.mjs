@@ -12,7 +12,7 @@ import { Ed25519Provider } from 'key-did-provider-ed25519'
 import { getResolver } from 'key-did-resolver'
 import { fromString } from 'uint8arrays/from-string'
 
-const ceramic = new CeramicClient('http://localhost:7007')
+const ceramic = new CeramicClient(process.env.CERAMIC_NODE_URL)
 
 /**
  * @param {Ora} spinner - to provide progress status.
@@ -31,19 +31,19 @@ export const writeComposite = async (spinner) => {
     attestationComposite
   ])
 
-  await writeEncodedComposite(composite, './src/__generated__/definition.json')
+  await writeEncodedComposite(composite, './composites/generated/definition.json')
 
   spinner.info('creating composite for runtime usage...')
   await writeEncodedCompositeRuntime(
     ceramic,
-    './src/__generated__/definition.json',
-    './src/__generated__/definition.js'
+    './composites/generated/definition.json',
+    './composites/generated/definition.js'
   )
 
   spinner.info('deploying composite...')
   const deployComposite = await readEncodedComposite(
     ceramic,
-    './src/__generated__/definition.json'
+    './composites/generated/definition.json'
   )
 
   await deployComposite.startIndexingOn(ceramic)
