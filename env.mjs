@@ -17,7 +17,8 @@ const server = z.object({
   SITE_URL: z.string().url().optional(),
   DISCORD_CLIENT_ID: z.string().min(1).optional(),
   DISCORD_CLIENT_SECRET: z.string().min(1).optional(),
-  DISCORD_BOT_SECRET: z.string().min(1).optional()
+  DISCORD_BOT_SECRET: z.string().min(1).optional(),
+  CERAMIC_NODE_URL: z.string().min(1).optional()
 })
 
 const client = z.object({
