@@ -23,6 +23,7 @@ import {
 import type { NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { fetchDiscordMessages, fetchOpenAI, fetchStore } from "../utils/api";
 
 const Home: NextPage = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -39,19 +40,27 @@ const Home: NextPage = () => {
     return wallet.slice(0, 6) + "..." + wallet.slice(-4);
   };
   const [messages, setMessages] = useState([]);
-  useEffect(() => {
-    if (session && session.user) {
-      fetch("/api/getDiscordMessages", {
-        method: "POST",
-        body: JSON.stringify({ session }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((res) => setMessages(res.messages));
+  const [openAIres, setopenAIres] = useState();
+  const [storeResult, setStoreResult] = useState();
+  const handleExecuteEas = async () => {
+    console.log("executing");
+    const discordMessages = await fetchDiscordMessages(session);
+    setMessages(discordMessages.messages);
+    if (messages && messages.length > 0 && session && session.user) {
+      console.log("openai");
+      const openAIresponse = await fetchOpenAI(session, messages);
+      console.log("openAIresponse", openAIresponse);
+      const storeRes = await fetchStore(address, openAIresponse);
+
+      setStoreResult(storeRes);
+      console.log("storeRes", storeRes);
     }
-  }, [session]);
+  };
+
+  useEffect(() => {
+    if (session && session.user && address) handleExecuteEas();
+  }, [session, address]);
+
   if (session) {
     const { user } = session;
     console.log(session);
@@ -125,6 +134,7 @@ const Home: NextPage = () => {
           </Flex>
         </Box>
         <Flex flexDirection={"column"} alignItems={"center"}>
+          {/* {openAIres && openAIres}
           {messages &&
             messages.length &&
             messages.map((message: any) => (
@@ -141,7 +151,7 @@ const Home: NextPage = () => {
               >
                 {message.user}: {message.text}
               </Box>
-            ))}
+            ))} */}
         </Flex>
 
         <Box m="30px auto">
