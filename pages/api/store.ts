@@ -11,37 +11,40 @@ import { CeramicClient } from '@ceramicnetwork/http-client'
 import { fromString } from 'uint8arrays/from-string'
 import KeyResolver from 'key-did-resolver'
 
-const eas = new EAS(EASContractAddress)
-const schemaEncoder = new SchemaEncoder('string EmotionalIntelligence,string Creativity,string CommunicationInitiative,string LeadershipQualities')
-
 const provider = new JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
 const signer = new Wallet(process.env.AUTHOR_KEY!)
 
-// @ts-expect-error: Ignore type error
+const eas = new EAS(EASContractAddress)
+const schemaEncoder = new SchemaEncoder('string EmotionalIntelligence,string Creativity,string CommunicationInitiative,string LeadershipQualities')
+
 eas.connect(provider)
 
 export default async function createAttestation (req: NextApiRequest, res: NextApiResponse<any>) {
   const offchain = await eas.getOffchain()
   const { address, data } = req.body
 
+  const ei = data.find((e: any) => e.type === 'Emotional Intelligence')
+  const c = data.find((e: any) => e.type === 'Creativity')
+  const ci = data.find((e: any) => e.type === 'Communication and Initiative')
+  const lq = data.find((e: any) => e.type === 'Leadership Qualities')
+
   const encodedData = schemaEncoder.encodeData([
-    { name: 'EmotionalIntelligence', value: data.EmotionalIntelligence, type: 'string' },
-    { name: 'Creativity', value: data.Creativity, type: 'string' },
-    { name: 'CommunicationInitiative', value: data.CommunicationInitiative, type: 'string' },
-    { name: 'LeadershipQualities', value: data.LeadershipQualities, type: 'string' }
+    { name: 'EmotionalIntelligence', value: `${ei.score} | ${ei.description}`, type: 'string' },
+    { name: 'Creativity', value: `${c.score} | ${c.description}`, type: 'string' },
+    { name: 'CommunicationInitiative', value: `${ci.score} | ${ci.description}`, type: 'string' },
+    { name: 'LeadershipQualities', value: `${lq.score} | ${lq.description}`, type: 'string' }
   ])
 
   const offchainAttestation = await offchain.signOffchainAttestation({
     recipient: address,
-    expirationTime: 0,
-    time: Math.floor(Date.now() / 1000),
+    expirationTime: BigInt(0),
+    time: BigInt(Math.floor(Date.now() / 1000)),
     revocable: false,
     version: 1,
-    nonce: 0,
+    nonce: BigInt(0),
     schema: '0xb494add8fe8ee3e1aa2dd8d6f71521dd0135208fcfc474eda72c8aa6aef5959d',
     refUID: '0x0000000000000000000000000000000000000000000000000000000000000000',
     data: encodedData
-    // @ts-expect-error: Ignore type error
   }, signer)
 
   const ceramic = new CeramicClient(process.env.CERAMIC_NODE_URL)
