@@ -1,58 +1,50 @@
-import NextAuth from 'next-auth'
-import DiscordProvider from 'next-auth/providers/discord'
+import NextAuth from "next-auth";
+import DiscordProvider from "next-auth/providers/discord";
 
 const scopes = [
-  'identify',
-  'email',
-  'connections',
-  'messages.read',
-  'bot',
-  'webhook.incoming',
-  'guilds',
-  'guilds.join',
+  "identify",
+  "email",
+  "connections",
+  "messages.read",
+  "bot",
+  "webhook.incoming",
+  "guilds",
+  "guilds.join",
   // "dm_channes.read",
-  'guilds.members.read'
-]
+  "guilds.members.read",
+];
 
 export default NextAuth({
   providers: [
     DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID ?? '',
-      clientSecret: process.env.DISCORD_CLIENT_SECRET ?? '',
-      authorization: { params: { scope: scopes.join(' ') } }
-    })
+      clientId: process.env.DISCORD_CLIENT_ID ?? "",
+      clientSecret: process.env.DISCORD_CLIENT_SECRET ?? "",
+      authorization: { params: { scope: scopes.join(" ") } },
+    }),
   ],
   callbacks: {
-    async jwt ({ token, account, profile }) {
+    async jwt({ token, account, profile }) {
       if (account) {
-        console.log('account', account)
-        // console.log("account", account);
-        // console.log("profile", profile);
-
-        token.accessToken = account.access_token
-        token.tokenType = account.token_type
-        // token.guild = account.guild;
+        token.accessToken = account.access_token;
+        token.tokenType = account.token_type;
+        token.server = {};
+        token.server = account.guild;
       }
       if (profile) {
-        token.profile = profile
+        token.profile = profile;
       }
-      return token
+      return token;
     },
 
-    async session ({ session, token, user }: any) {
-      // console.log(token);
-      console.log('token', token)
-
+    async session({ session, token, user }: any) {
+      console.log("token", token);
       if (session) {
-        session.accessToken = token.accessToken
-        session.tokenType = token.tokenType
-        // session.discordUser = token.profile;
+        session.server = token.server;
+        session.accessToken = token.accessToken;
+        session.tokenType = token.tokenType;
       }
-      console.log('user', user)
-      console.log('session', session)
-      console.log('token', token)
 
-      return session
-    }
-  }
-})
+      return session;
+    },
+  },
+});

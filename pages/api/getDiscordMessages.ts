@@ -1,35 +1,41 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { Client, GatewayIntentBits } from 'discord.js'
+import { NextApiRequest, NextApiResponse } from "next";
+import client from "../../utils/discord";
 
-const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
-})
-
-client.once('ready', () => {
-  console.log(`Logged in as ${client?.user?.tag}`)
-})
-
-client.on('messageCreate', async (message: any) => {
-  if (message.channel.name === 'Digital Biometrics | The State') {
-    console.log(`Received message: ${message.content}`)
-  }
-})
-
-export default async function testDiscord (req: NextApiRequest, res: NextApiResponse<any>) {
+export default async function testDiscord(
+  req: NextApiRequest,
+  res: NextApiResponse<any>,
+) {
   try {
-    await client.login(process.env.DISCORD_BOT_SECRET)
+    const { session } = req.body;
+    const channelId = session.server.system_channel_id;
+    console.log("channelId", channelId);
+    // console.log(session);
 
-    const channel = await client.channels.fetch('1154400705612894240')
-
+    const channel = await client.channels.fetch(
+      channelId,
+    );
+    console.log(channel);
     // @ts-expect-error
-    console.log(await channel.messages.fetch({ limit: 100 }))
+    const messages = await channel.messages.fetch({ limit: 100 });
+    console.log(messages);
+    // const messagesT = await channel.message.fetch({ limit: 100 });
+    // console.log(messages.length);
+    const textMessages = messages.map((m: any) => ({
+      user: m.author.username,
+      text: m.content,
+      date: new Date(m.createdTimestamp).toLocaleString(),
+    })).reverse().filter((m: any) => m.text.length > 0);
 
-    res.json({ ok: true })
+    console.log(
+      textMessages.map((m: any) => `${m.user}@${m.date}: ${m.text}`)
+        .join("\n"),
+    );
+    res.json({ ok: true, messages: textMessages });
   } catch (err) {
-    console.log(err)
+    console.log(err);
 
     res.json({
-      err
-    })
+      err,
+    });
   }
 }
