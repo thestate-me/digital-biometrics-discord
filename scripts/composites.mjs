@@ -11,14 +11,16 @@ import { DID } from 'dids'
 import { Ed25519Provider } from 'key-did-provider-ed25519'
 import { getResolver } from 'key-did-resolver'
 import { fromString } from 'uint8arrays/from-string'
+import ora from 'ora'
+
+const spinner = ora()
 
 const ceramic = new CeramicClient(process.env.CERAMIC_NODE_URL)
 
 /**
- * @param {Ora} spinner - to provide progress status.
  * @return {Promise<void>} - return void when composite finishes deploying.
  */
-export const writeComposite = async (spinner) => {
+export const writeComposite = async () => {
   await authenticate()
 
   spinner.info('writing composite to Ceramic...')
@@ -64,3 +66,6 @@ const authenticate = async () => {
   await did.authenticate()
   ceramic.did = did
 }
+
+spinner.info('[Composites] bootstrapping composites...')
+writeComposite().then(() => spinner.succeed('Composites] composites bootstrapped'))

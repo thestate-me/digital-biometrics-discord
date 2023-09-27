@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "generate": "node scripts/commands.mjs",
-    "prebuild": "node scripts/composites.mjs",
+    "composites": "node scripts/composites.mjs",
     "ceramic": "docker compose up",
     "dev": "node scripts/run.mjs",
     "nextDev": "next dev",

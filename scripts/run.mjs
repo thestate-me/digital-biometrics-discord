@@ -1,21 +1,8 @@
 import ora from 'ora'
 
 import { spawn } from 'child_process'
-import { writeComposite } from './composites.mjs'
 
 const spinner = ora()
-
-const bootstrap = async () => {
-  try {
-    spinner.info('[Composites] bootstrapping composites...')
-    await writeComposite(spinner)
-
-    spinner.succeed('Composites] composites bootstrapped')
-  } catch (err) {
-    spinner.fail(err.message)
-    throw err
-  }
-}
 
 const graphiql = async () => {
   spinner.info('[GraphiQL] starting graphiql...')
@@ -39,7 +26,6 @@ const next = async () => {
 
 const start = async () => {
   try {
-    await bootstrap()
     await graphiql()
     await next()
   } catch (err) {
