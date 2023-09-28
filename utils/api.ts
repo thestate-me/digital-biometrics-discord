@@ -37,3 +37,16 @@ export const fetchStore = async (address: any, data: any) => {
     .then((res) => res.json());
   return res;
 };
+export const fetchAttests = async (address: any) => {
+  const res = await fetch(`/api/get`, {
+    method: "POST",
+    body: JSON.stringify({
+      address,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json());
+  return res;
+};
