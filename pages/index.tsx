@@ -15,6 +15,7 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  Spinner,
   Stack,
   Text,
   useColorMode,
@@ -24,6 +25,7 @@ import type { NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { fetchDiscordMessages, fetchOpenAI, fetchStore } from "../utils/api";
+import { getQualitiesTypes } from "../utils/utils";
 
 const Home: NextPage = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -42,7 +44,9 @@ const Home: NextPage = () => {
   const [messages, setMessages] = useState([]);
   const [openAIres, setopenAIres] = useState();
   const [storeResult, setStoreResult] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const handleExecuteEas = async () => {
+    setIsLoading(true);
     console.log("executing");
     const discordMessages = await fetchDiscordMessages(session);
     setMessages(discordMessages.messages);
@@ -50,9 +54,17 @@ const Home: NextPage = () => {
       console.log("openai");
       const openAIresponse = await fetchOpenAI(session, messages);
       console.log("openAIresponse", openAIresponse);
-      const storeRes = await fetchStore(address, openAIresponse);
+      const typedOpenAIresponse = getQualitiesTypes(openAIresponse);
+      console.log(typedOpenAIresponse);
+      if (typedOpenAIresponse.length != 4) {
+        setLoading(false);
+        return;
+      }
+      const storeRes = await fetchStore(address, typedOpenAIresponse);
 
       setStoreResult(storeRes);
+      setLoading(false);
+
       console.log("storeRes", storeRes);
     }
   };
@@ -134,6 +146,11 @@ const Home: NextPage = () => {
           </Flex>
         </Box>
         <Flex flexDirection={"column"} alignItems={"center"}>
+          {isLoading ? (
+            <Text mt="20px">
+              <Spinner />
+            </Text>
+          ) : null}
           {/* {openAIres && openAIres}
           {messages &&
             messages.length &&
