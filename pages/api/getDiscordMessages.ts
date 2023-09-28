@@ -11,19 +11,23 @@ export default async function testDiscord(
     // console.log(session);
     if (!channelId) return res.json({ ok: false, error: "No channel id" });
     // console.log(channel);
-    const messages = await (await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
-      headers: {
-        "Authorization": `Bot ${process.env.DISCORD_BOT_SECRET}`,
-      }
-    })).json()
+    const messages = await (await fetch(
+      `https://discord.com/api/v10/channels/${channelId}/messages`,
+      {
+        headers: {
+          "Authorization": `Bot ${process.env.DISCORD_BOT_SECRET}`,
+        },
+      },
+    )).json();
     // console.log(messages);
     if (!messages) console.log("error");
     // const messagesT = await channel.message.fetch({ limit: 100 });
     // console.log(messages.length);
+    console.log(messages[1]);
     const textMessages = messages.map((m: any) => ({
       user: m.author.username,
       text: m.content,
-      date: new Date(m.createdTimestamp).toLocaleString(),
+      date: new Date(m.timestamp).toLocaleString(),
     })).reverse().filter((m: any) => m.text.length > 0);
 
     console.log(

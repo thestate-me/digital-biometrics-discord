@@ -13,12 +13,12 @@ Output only the following:
    - Creativity: [Score]/100
    [Insightful description with examples.]
    - Communication and Initiative: [Score]/100
-     [Insightful description with examples.]
-     - Leadership Qualities: [Score]/100
-     [Insightful description with examples.]
+   [Insightful description with examples.]
+   - Leadership Qualities: [Score]/100
+   [Insightful description with examples.]
 
-     chat history dataset:
-     `;
+   chat history dataset:
+   `;
 };
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {

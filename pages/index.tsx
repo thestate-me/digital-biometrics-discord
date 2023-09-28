@@ -24,7 +24,12 @@ import {
 import type { NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { fetchDiscordMessages, fetchOpenAI, fetchStore } from "../utils/api";
+import {
+  fetchAttests,
+  fetchDiscordMessages,
+  fetchOpenAI,
+  fetchStore,
+} from "../utils/api";
 import { getQualitiesTypes } from "../utils/utils";
 
 const Home: NextPage = () => {
@@ -43,29 +48,45 @@ const Home: NextPage = () => {
   };
   const [messages, setMessages] = useState([]);
   const [openAIres, setopenAIres] = useState();
-  const [storeResult, setStoreResult] = useState();
-  const [isLoading, setIsLoading] = useState(false);
+  const [attestLink, setattestLink] = useState();
+  const [storeResult, setStoreResult] = useState<any[]>([]);
+  const [typedRes, setTypedRes] = useState<any[]>([]);
+  const [isLoading, setLoading] = useState(false);
+  const [isExecuted, setExecuted] = useState(false);
   const handleExecuteEas = async () => {
-    setIsLoading(true);
+    if (isExecuted) return;
+    setLoading(true);
+    setExecuted(true);
+
     console.log("executing");
     const discordMessages = await fetchDiscordMessages(session);
+    console.log(discordMessages, "discordMessages");
     setMessages(discordMessages.messages);
+    // return;
     if (messages && messages.length > 0 && session && session.user) {
       console.log("openai");
       const openAIresponse = await fetchOpenAI(session, messages);
       console.log("openAIresponse", openAIresponse);
       const typedOpenAIresponse = getQualitiesTypes(openAIresponse);
+
       console.log(typedOpenAIresponse);
       if (typedOpenAIresponse.length != 4) {
         setLoading(false);
         return;
       }
+      setTypedRes(typedOpenAIresponse);
       const storeRes = await fetchStore(address, typedOpenAIresponse);
 
       setStoreResult(storeRes);
-      setLoading(false);
 
       console.log("storeRes", storeRes);
+      if (storeRes) {
+        const attest = await fetchAttests(address);
+        setattestLink(attest.link);
+        console.log("link", attest.link);
+        console.log("storeResult", storeResult);
+        setLoading(false);
+      }
     }
   };
 
@@ -146,11 +167,6 @@ const Home: NextPage = () => {
           </Flex>
         </Box>
         <Flex flexDirection={"column"} alignItems={"center"}>
-          {isLoading ? (
-            <Text mt="20px">
-              <Spinner />
-            </Text>
-          ) : null}
           {/* {openAIres && openAIres}
           {messages &&
             messages.length &&
@@ -173,7 +189,39 @@ const Home: NextPage = () => {
 
         <Box m="30px auto">
           <Flex alignItems={"center"} justifyContent={"center"} mt="30px">
-            {isConnected ? null : (
+            {isConnected ? (
+              <Box>
+                {isLoading ? (
+                  <Text mt="20px">
+                    <Spinner />
+                  </Text>
+                ) : (
+                  <Box textAlign={"left"} maxW="600px" mx="auto">
+                    <Heading
+                      _hover={{
+                        color: "purple.500",
+                        borderBottom: "4px solid",
+                      }}
+                    >
+                      <a href={attestLink} target="_blank">
+                        Check attestation ↗
+                      </a>
+                    </Heading>
+                    <br />
+                    {typedRes && typedRes.length
+                      ? typedRes.map((char: any) => (
+                          <Box key={char.type} mb="40px">
+                            <Heading>
+                              {char.type} — {char.score} / 100
+                            </Heading>
+                            {char.description}
+                          </Box>
+                        ))
+                      : null}
+                  </Box>
+                )}
+              </Box>
+            ) : (
               <Flex flexDirection={"column"}>
                 <Flex justifyContent={"center"} mb="20px">
                   Now, connect your wallet to Discord.
