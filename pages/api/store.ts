@@ -129,15 +129,16 @@ export default async function createAttestation (req: NextApiRequest, res: NextA
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            content: `Emotional Intelligence ${ei.score} | ${ei.description}
-Creativity: ${c.score} | ${c.description}
-Communication and Initiative: ${ci.score} | ${ci.description}
-Leadership Qualities: ${lq.score} | ${lq.description}
+            content: `Emotional Intelligence ${ei.score}
+Creativity: ${c.score}
+Communication and Initiative: ${ci.score}
+Leadership Qualities: ${lq.score}
 
 ${generateLink(signer.address, offchainAttestation)}`
           })
         },
       )
+      
       return res.json(composeData)
     } else {
       return res.json({
