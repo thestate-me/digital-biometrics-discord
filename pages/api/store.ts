@@ -1,7 +1,7 @@
 import { EAS, SchemaEncoder } from '@ethereum-attestation-service/eas-sdk'
 import { JsonRpcProvider, Wallet } from 'ethers'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { EASContractAddress } from '../../utils/utils'
+import { EASContractAddress, generateLink } from '../../utils/utils'
 import { ComposeClient } from '@composedb/client'
 import { definition } from '../../composites/generated/definition'
 import { RuntimeCompositeDefinition } from '@composedb/types'
@@ -21,7 +21,7 @@ eas.connect(provider)
 
 export default async function createAttestation (req: NextApiRequest, res: NextApiResponse<any>) {
   const offchain = await eas.getOffchain()
-  const { address, data } = req.body
+  const { address, data, channelId } = req.body
 
   const ei = data.find((e: any) => e.type === 'Emotional Intelligence')
   const c = data.find((e: any) => e.type === 'Creativity')
@@ -120,6 +120,24 @@ export default async function createAttestation (req: NextApiRequest, res: NextA
     `)
 
     if (composeData.data.createAttestation.document.id) {
+      await fetch(
+        `https://discord.com/api/v10/channels/${channelId}/messages`,
+        {
+          method: 'POST',
+          headers: {
+            "Authorization": `Bot ${process.env.DISCORD_BOT_SECRET}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content: `Emotional Intelligence ${ei.score} | ${ei.description}
+Creativity: ${c.score} | ${c.description}
+Communication and Initiative: ${ci.score} | ${ci.description}
+Leadership Qualities: ${lq.score} | ${lq.description}
+
+${generateLink(signer.address, offchainAttestation)}`
+          })
+        },
+      )
       return res.json(composeData)
     } else {
       return res.json({

@@ -5,6 +5,7 @@ import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { JsonRpcProvider } from "ethers";
 import invariant from "tiny-invariant";
+import { deflateSync } from 'node:zlib'
 
 import type {
   Attestation,
@@ -13,6 +14,7 @@ import type {
   EnsNamesResult,
   MyAttestationResult,
 } from "./types";
+import { SignedOffchainAttestation } from "@ethereum-attestation-service/eas-sdk";
 
 export const alchemyApiKey = process.env.REACT_APP_ALCHEMY_API_KEY;
 
@@ -251,4 +253,30 @@ export function getQualitiesTypes(inputText: string) {
   }
 
   return results;
+}
+
+export function generateLink(attester: string, { uid, message, domain, signature }: SignedOffchainAttestation): string {
+  const t = []
+
+  t.push(domain.version)
+  t.push(domain.chainId)
+  t.push(domain.verifyingContract)
+  t.push(signature.r)
+  t.push(signature.s)
+  t.push(signature.v)
+  t.push(attester)
+  t.push(uid)
+  t.push(message.schema)
+  t.push(message.recipient)
+  t.push(message.time)
+  t.push(message.expirationTime || 0)
+  t.push(message.refUID)
+  t.push(message.revocable || false)
+  t.push(message.data)
+  t.push(message.nonce || 0)
+  t.push(message.version)
+
+  const b64 = encodeURIComponent(deflateSync(JSON.stringify(t)).toString('base64'))
+
+  return `https://sepolia.easscan.org/offchain/url/#attestation=${b64}`
 }
