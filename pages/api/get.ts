@@ -40,7 +40,8 @@ export default async function createAttestation (
           }
           ],
           }
-          first: 100) {
+          orderBy: { field: CREATED_AT, direction: DESC }
+          first: 1) {
             edges {
               node {
                 id
@@ -97,7 +98,7 @@ export default async function createAttestation (
       return `https://sepolia.easscan.org/offchain/url/#attestation=${b64}`
     })
 
-    return res.json({ attestats, links })
+    return res.json({ links })
   } catch (err) {
     res.json({
       err
