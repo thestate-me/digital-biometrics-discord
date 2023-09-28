@@ -85,7 +85,7 @@ export default async function createAttestation (
       return `https://sepolia.easscan.org/offchain/url/#attestation=${b64}`
     })
 
-    return res.json({ links })
+    return res.json({ link: links[0] })
   } catch (err) {
     console.log(err)
     res.json({
