@@ -5,7 +5,7 @@ import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { JsonRpcProvider } from "ethers";
 import invariant from "tiny-invariant";
-import { deflateSync } from 'node:zlib'
+import { deflateSync } from 'zlib'
 
 import type {
   Attestation,
