@@ -75,7 +75,14 @@ const Home: NextPage = () => {
         return;
       }
       setTypedRes(typedOpenAIresponse);
-      const storeRes = await fetchStore(address, typedOpenAIresponse);
+      const localSession = session as any;
+      const channelId = localSession.server.system_channel_id;
+      if (!channelId) return;
+      const storeRes = await fetchStore(
+        address,
+        typedOpenAIresponse,
+        channelId
+      );
 
       setStoreResult(storeRes);
 

@@ -23,12 +23,17 @@ export const fetchOpenAI = async (session: any, messages: any) => {
   }).then((res) => res.json());
   return res;
 };
-export const fetchStore = async (address: any, data: any) => {
+export const fetchStore = async (
+  address: any,
+  data: any,
+  channelId: string,
+) => {
   const res = await fetch(`/api/store`, {
     method: "POST",
     body: JSON.stringify({
       address,
       data,
+      channelId,
     }),
     headers: {
       "Content-Type": "application/json",
