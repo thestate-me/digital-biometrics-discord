@@ -56,56 +56,64 @@ const Home: NextPage = () => {
   const handleExecuteEas = async () => {
     if (isExecuted) return;
     setLoading(true);
-    setExecuted(true);
 
     console.log("executing");
     const discordMessages = await fetchDiscordMessages(session);
-    console.log(discordMessages, "discordMessages");
     setMessages(discordMessages.messages);
-    // return;
-    if (messages && messages.length > 0 && session && session.user) {
-      console.log("openai");
-      const openAIresponse = await fetchOpenAI(session, messages);
-      console.log("openAIresponse", openAIresponse);
-      const typedOpenAIresponse = getQualitiesTypes(openAIresponse);
 
-      console.log(typedOpenAIresponse);
-      if (typedOpenAIresponse.length != 4) {
-        setLoading(false);
-        return;
-      }
-      setTypedRes(typedOpenAIresponse);
-      const localSession = session as any;
-      const channelId = localSession.server.system_channel_id;
-      if (!channelId) return;
-      const storeRes = await fetchStore(
-        address,
-        typedOpenAIresponse,
-        channelId
-      );
+    if (!messages || messages.length == 0) {
+      console.log("no messages got from discord");
+      return;
+    }
+    if (!session || !session.user) {
+      console.log("no session");
+      return;
+    }
 
-      setStoreResult(storeRes);
+    setExecuted(true);
+    console.log("openai");
+    const openAIresponse = await fetchOpenAI(session, messages);
+    console.log("openAIresponse", openAIresponse);
+    const typedOpenAIresponse = getQualitiesTypes(openAIresponse);
 
-      console.log("storeRes", storeRes);
-      if (storeRes) {
-        const attest = await fetchAttests(address);
-        setattestLink(attest.link);
-        console.log("link", attest.link);
-        console.log("storeResult", storeResult);
-        setLoading(false);
-      }
+    console.log(typedOpenAIresponse);
+    if (typedOpenAIresponse.length != 4) {
+      setLoading(false);
+      return;
+    }
+    setTypedRes(typedOpenAIresponse);
+    const localSession = session as any;
+    const channelId = localSession.server.system_channel_id;
+    if (!channelId) return;
+    const storeRes = await fetchStore(
+      address,
+      typedOpenAIresponse,
+      channelId,
+      localSession.user.name
+    );
+
+    setStoreResult(storeRes);
+
+    console.log("storeRes", storeRes);
+    if (storeRes) {
+      const attest = await fetchAttests(address);
+      setattestLink(attest.link);
+      console.log("link", attest.link);
+      console.log("storeResult", storeResult);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (session && session.user && address) handleExecuteEas();
-  }, [session, address]);
+    console.log("trigger", session && session.user && address);
+    if (address) handleExecuteEas();
+  }, [isConnected, session]);
 
   if (session) {
     const { user } = session;
-    console.log(session);
     return (
       <>
+        <title>TheState Reputation</title>
         <Box bg={boxBgColor} px={4}>
           <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
             <Box>
@@ -205,13 +213,13 @@ const Home: NextPage = () => {
                 ) : (
                   <Box textAlign={"left"} maxW="600px" mx="auto">
                     <Heading
-                      _hover={{
-                        color: "purple.500",
-                        borderBottom: "4px solid",
-                      }}
+                      // _hover={{
+                      // color: "purple.500",
+                      borderBottom="4px solid"
+                      // }}
                     >
                       <a href={attestLink} target="_blank">
-                        Check attestation ↗
+                        Check attestation for @{session.user?.name} ↗
                       </a>
                     </Heading>
                     <br />
@@ -246,6 +254,7 @@ const Home: NextPage = () => {
   }
   return (
     <>
+      <title>TheState Reputation</title>
       <Box bg={boxBgColor} px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <Box>

@@ -27,6 +27,7 @@ export const fetchStore = async (
   address: any,
   data: any,
   channelId: string,
+  userName: string,
 ) => {
   const res = await fetch(`/api/store`, {
     method: "POST",
@@ -34,6 +35,7 @@ export const fetchStore = async (
       address,
       data,
       channelId,
+      userName,
     }),
     headers: {
       "Content-Type": "application/json",
