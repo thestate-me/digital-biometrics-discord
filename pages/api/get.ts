@@ -18,30 +18,17 @@ export default async function createAttestation (
   })
 
   try {
-    const data: any = await composeClient.executeQuery(`
-          query {
-              attestationIndex(filters: {
-                or: [
-          {
-            where: {
-              attester: {
-                    equalTo: "${signer.address}"
-                  }
+    const r: any = await composeClient.executeQuery(`
+        query {
+          attestationIndex(
+            filters: {
+              or: [
+                { where: { attester: { equalTo: "${signer.address}" } } }
+                { and: { where: { recipient: { equalTo: "${req.body.account}" } } } }
+              ]
             }
-          },
-          {
-            and: {
-              where: {
-            recipient : {
-                    equalTo: "${req.body.account}"
-                  }
-              }
-            }
-          }
-          ],
-          }
-          orderBy: { field: CREATED_AT, direction: DESC }
-          first: 1) {
+            last: 1
+          ) {
             edges {
               node {
                 id
@@ -52,7 +39,7 @@ export default async function createAttestation (
                 easVersion
                 version
                 chainId
-                types{
+                types {
                   name
                   type
                 }
@@ -66,10 +53,10 @@ export default async function createAttestation (
               }
             }
           }
-        }
-      `)
+        }    
+    `)
 
-    const attestats = data.data.attestationIndex.edges
+    const attestats = r.data.attestationIndex.edges
 
     const links = attestats.map((a: any) => {
       const t = []
@@ -100,6 +87,7 @@ export default async function createAttestation (
 
     return res.json({ links })
   } catch (err) {
+    console.log(err)
     res.json({
       err
     })
