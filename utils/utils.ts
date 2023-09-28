@@ -259,7 +259,7 @@ export function generateLink(attester: string, { uid, message, domain, signature
   const t = []
 
   t.push(domain.version)
-  t.push(domain.chainId)
+  t.push(Number(domain.chainId))
   t.push(domain.verifyingContract)
   t.push(signature.r)
   t.push(signature.s)
@@ -268,12 +268,12 @@ export function generateLink(attester: string, { uid, message, domain, signature
   t.push(uid)
   t.push(message.schema)
   t.push(message.recipient)
-  t.push(message.time)
-  t.push(message.expirationTime || 0)
+  t.push(Number(message.time))
+  t.push(Number(message.expirationTime) || 0)
   t.push(message.refUID)
   t.push(message.revocable || false)
   t.push(message.data)
-  t.push(message.nonce || 0)
+  t.push(Number(message.nonce) || 0)
   t.push(message.version)
 
   const b64 = encodeURIComponent(deflateSync(JSON.stringify(t)).toString('base64'))
