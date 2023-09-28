@@ -160,7 +160,7 @@ export default async function createAttestation(
           },
           body: JSON.stringify({
             content: `Results for ${userName}
-Emotional Intelligence ${ei.score}
+Emotional Intelligence: ${ei.score}
 Creativity: ${c.score}
 Communication and Initiative: ${ci.score}
 Leadership Qualities: ${lq.score}
