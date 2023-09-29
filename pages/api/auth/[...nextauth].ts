@@ -4,7 +4,7 @@ import DiscordProvider from "next-auth/providers/discord";
 const scopes = [
   "identify",
   "email",
-  "connections",
+  // "connections",
   "messages.read",
   // "bot",
   // "webhook.incoming",
