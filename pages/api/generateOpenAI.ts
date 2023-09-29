@@ -48,5 +48,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 };
-
+export const config = {
+  maxDuration: 10,
+};
 export default handler;
