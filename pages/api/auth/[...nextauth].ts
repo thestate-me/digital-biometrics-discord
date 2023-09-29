@@ -9,8 +9,8 @@ const scopes = [
   // "bot",
   // "webhook.incoming",
   "guilds",
-  // "guilds.join",
-  // "guilds.members.read",
+  "guilds.join",
+  "guilds.members.read",
 ];
 
 export default NextAuth({
