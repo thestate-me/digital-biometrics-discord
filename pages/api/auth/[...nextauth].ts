@@ -6,12 +6,11 @@ const scopes = [
   "email",
   "connections",
   "messages.read",
-  "bot",
-  "webhook.incoming",
+  // "bot",
+  // "webhook.incoming",
   "guilds",
-  "guilds.join",
-  // "dm_channes.read",
-  "guilds.members.read",
+  // "guilds.join",
+  // "guilds.members.read",
 ];
 
 export default NextAuth({
