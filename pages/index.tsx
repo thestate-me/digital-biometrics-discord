@@ -107,7 +107,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     console.log("trigger", session && session.user && address);
     if (address) handleExecuteEas();
-  }, [isConnected, session]);
+  }, [isConnected, session, messages]);
 
   if (session) {
     const { user } = session;
