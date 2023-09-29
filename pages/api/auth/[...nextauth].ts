@@ -7,7 +7,7 @@ const scopes = [
   // "connections",
   "messages.read",
   // "bot",
-  // "webhook.incoming",
+  "webhook.incoming",
   "guilds",
   "guilds.join",
   "guilds.members.read",
