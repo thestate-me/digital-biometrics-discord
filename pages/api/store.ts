@@ -187,3 +187,6 @@ Leadership Qualities: ${lq.score}
     });
   }
 }
+export const config = {
+  maxDuration: 10,
+};
