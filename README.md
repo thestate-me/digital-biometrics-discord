@@ -1,6 +1,13 @@
-# Save Attestations to Ceramic Network with EAS
+# digital-biometrics-discord
 
-This repository contains a simple example of how to save attestations generated using the Ethereum Attestation Service to the Ceramic Network using ComposeDB.
+Analyze your Discord server
+↓
+Know your reputation
+↓
+Store it on the blockchain
+↓
+Check attestation
+
 
 ## Getting Started
 
